@@ -1,4 +1,4 @@
-import { MentorGuard } from './mentor.guard';
+import { MentorGuard } from './librarian.guard';
 
 describe('MentorGuard', () => {
   it('should be defined', () => {
