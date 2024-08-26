@@ -1,56 +1,57 @@
+import { InjectEntityManager, InjectRepository } from '@mikro-orm/nestjs';
+import { EntityRepository } from '@mikro-orm/core';
+import { EntityManager } from '@mikro-orm/postgresql';
 import { Injectable } from '@nestjs/common';
 import { CreateBookDto } from 'dto/create-book.dto';
 import { UpdateBookDto } from 'dto/update-book.dto';
+import { Book } from './books.entity';
 
 @Injectable()
 export class BooksService {
-	private books = [
-		{ id: 1, title: 'Book 1', author: 'Author 1', genre: 'Fiction' },
-		{ id: 2, title: 'Book 2', author: 'Author 2', genre: 'Non-fiction' },
-		{ id: 3, title: 'Book 3', author: 'Author 3', genre: 'Fiction' },
-		{ id: 4, title: 'Book 4', author: 'Author 4', genre: 'Non-fiction' },
-	];
+	constructor(
+		@InjectRepository(Book)
+    	private readonly bookRepository: EntityRepository<Book>,
+		// @InjectEntityManager()
+		private readonly em: EntityManager,
+	) {}
 
-	findAll() {
-		return this.books;
+	async findAll() {
+		return this.bookRepository.findAll();
 	}
 
-	getBook(id: number) {
-		const book = this.books.find(book => book.id === id);
-
-		if (!book) {
-			throw new Error('Book not found');
-		}
-
-		return book;
+	async getBook(id: number) {
+		return this.bookRepository.findOne(id);
 	}
 
-	getBooks(genre?: string) {
+	async getBooks(genre?: string) {
 		if (genre) {
-			return this.books.filter(book => book.genre === genre);
+			return this.bookRepository.find({ genre });
 		}
-		return this.books;
+		return this.bookRepository.findAll();
 	}
 
-	createBook(createBookDto: CreateBookDto) {
-		const id = this.books.length + 1;
-		const newBook = { id, ...createBookDto };
-		this.books.push(newBook);
+	async createBook(createBookDto: CreateBookDto) {
+		const newBook = this.bookRepository.create(createBookDto);
+		await this.em.persistAndFlush(newBook);
 		return newBook;
 	}
 
-	updateBook(id: number, updateBookDto: UpdateBookDto) {
-		this.books = this.books.map(book => {
-			if (book.id === id) {
-				return { ...book, ...updateBookDto };
-			}
-			return book;
-		});
+	async updateBook(id: number, updateBookDto: UpdateBookDto) {
+		const book = await this.bookRepository.findOne(id);
+		if (!book) {
+			throw new Error('Book not found');
+		}
+		Object.assign(book, updateBookDto);
+		await this.em.persistAndFlush(book);
+		return book;
 	}
 
-	deleteBook(id: number) {
-		const toBeRemoved = this.getBook(id);
-		this.books = this.books.filter(book => book.id !== id);
-		return toBeRemoved;
+	async deleteBook(id: number) {
+		const book = await this.bookRepository.findOne(id);
+		if (!book) {
+			throw new Error('Book not found');
+		}
+		await this.em.removeAndFlush(book);
+		return book;
 	}
 }
