@@ -1,73 +1,69 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+NestJS CRUD API with MikroORM and Docker
+This repository contains a NestJS CRUD API application that uses MikroORM for database management and Docker for containerization. The application is set up to work with a PostgreSQL database, and includes a pgAdmin instance for easy database management.
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Getting Started
+Prerequisites
+Ensure you have the following installed on your machine:
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Docker
+Docker Compose
+Running the Application
+To start the application, follow these steps:
 
-## Description
+Clone the repository:
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+git clone https://github.com/blenddehari/NestJ-Experimental.git
+cd NestJ-Experimental
 
-## Installation
+Set up environment variables:
 
-```bash
-$ npm install
-```
+Create a .env file in the root directory of the project and configure the following environment variables:
 
-## Running the app
+POSTGRES_DB=books_db
+POSTGRES_USER=admin
+POSTGRES_PASSWORD=admin
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5433
+PGADMIN_DEFAULT_EMAIL=admin@admin.com
+PGADMIN_DEFAULT_PASSWORD=admin
 
-```bash
-# development
-$ npm run start
+Run the application using Docker Compose:
 
-# watch mode
-$ npm run start:dev
+Start the application stack (NestJS API, PostgreSQL, and pgAdmin) with the following command:
 
-# production mode
-$ npm run start:prod
-```
+docker-compose up -d
+This command will build and start the Docker containers in detached mode.
 
-## Test
+Check the running containers:
 
-```bash
-# unit tests
-$ npm run test
+Verify that the containers are running:
 
-# e2e tests
-$ npm run test:e2e
+docker-compose ps
+You should see containers for the PostgreSQL database, pgAdmin, and the NestJS application.
 
-# test coverage
-$ npm run test:cov
-```
+Accessing the Application
+API: The NestJS CRUD API will be available at http://localhost:3000.
+pgAdmin: Access pgAdmin at http://localhost:8080. Use the credentials provided in the .env file to log in.
+Database Migrations
+To create and run database migrations, use the following commands:
 
-## Support
+Create a migration:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+npx mikro-orm migration:create
+Run the migration:
 
-## Stay in touch
+npx mikro-orm migration:up
+Interacting with the API
+You can interact with the API using tools like Postman, Thunder Client, or cURL. Example API endpoints include:
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+GET /books: Retrieve all books.
+GET /books/:id: Retrieve a book by ID.
+POST /books: Create a new book.
+PUT /books/:id: Update an existing book.
+DELETE /books/:id: Delete a book.
 
-## License
+Stopping the Application
+To stop the running containers, use:
 
-Nest is [MIT licensed](LICENSE).
+docker-compose down
+This will stop and remove the containers.
